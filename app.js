@@ -91,7 +91,7 @@ function updatePreview(fileName) {
   preview.src = URL.createObjectURL(blob);
 }
 
-// Publish button calls GitHub backend
+// Publish button now calls Netlify function
 document.getElementById('publish').onclick = async () => {
   const username = prompt("Enter your Firefly username:");
   if (!username) return alert("Username required.");
@@ -104,7 +104,7 @@ document.getElementById('publish').onclick = async () => {
   }
 
   try {
-    // Update this URL to your serverless function endpoint (Netlify/other)
+    // Call your Netlify serverless function
     const res = await fetch("/.netlify/functions/publish", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -113,10 +113,9 @@ document.getElementById('publish').onclick = async () => {
 
     const data = await res.json();
     if (data.success) {
-      // Direct link to GitHub Pages folder
-      alert(`✅ Site published! View it at: ${data.url}`);
+      alert(`✅ Site published! Visit it at: ${data.url}`);
     } else {
-      alert(`❌ Failed to publish site: ${data.error || "Unknown error"}`);
+      alert(`❌ Publish failed: ${data.error || "Unknown error"}`);
     }
   } catch (e) {
     alert(`❌ Publish request failed: ${e.message}`);
