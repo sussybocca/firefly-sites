@@ -1,4 +1,64 @@
-body { font-family: Arial, sans-serif; margin:0; padding:0; }
-header { padding:10px; background:#222; color:#fff; display:flex; justify-content:space-between; align-items:center; }
-button { padding:5px 10px; cursor:pointer; }
-#preview { border-top:1px solid #ccc; }
+body, html {
+  margin: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+}
+
+#sidebar {
+  width: 300px;
+  background-color: #1e1e1e;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+#file-actions {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px;
+  gap: 5px;
+}
+
+#file-actions button {
+  flex: 1 1 45%;
+  padding: 5px;
+  background-color: #007acc;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#file-actions button:hover {
+  background-color: #005f99;
+}
+
+#file-tree {
+  list-style: none;
+  padding: 10px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+#file-tree li {
+  padding: 2px 5px;
+  cursor: pointer;
+}
+
+#file-tree li:hover {
+  background-color: #333;
+}
+
+#editor-container {
+  flex: 1;
+}
+
+#editor {
+  width: 100%;
+  height: 100%;
+}
