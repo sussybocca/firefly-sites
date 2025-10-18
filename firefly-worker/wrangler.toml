@@ -1,0 +1,12 @@
+name = "firefly-worker"
+main = "worker.js"
+type = "javascript"
+
+account_id = "0ba46085566294212d4e837a2a93c302"
+workers_dev = true
+compatibility_date = "2025-10-18"
+
+[[r2_buckets]]
+binding = "R2_BUCKET"      # Must match your Worker code
+bucket_name = "dude"       # Your R2 bucket name
+preview_bucket_name = "dude"

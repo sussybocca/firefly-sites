@@ -1,86 +1,44 @@
-import fetch from "node-fetch";
+export default {
+  async fetch(request, env) {
+    try {
+      if (request.method !== "POST") {
+        return new Response("Method not allowed", { status: 405 });
+      }
 
-export async function handler(event) {
-  try {
-    const { username, files } = JSON.parse(event.body);
-    if (!username || !files) {
-      return { statusCode: 400, body: "Missing username or files" };
-    }
+      const { username, files } = await request.json();
+      if (!username || !files) {
+        return new Response("Missing username or files", { status: 400 });
+      }
 
-    const repo = process.env.GITHUB_REPO;
-    const token = process.env.GITHUB_TOKEN;
+      const bucket = env.R2_BUCKET; // R2 bucket binding
 
-    // Encode content to Base64 for GitHub API
-    const commits = [];
-    for (const [filename, content] of Object.entries(files)) {
-      commits.push({
-        path: `${username}/${filename}`,
-        message: `Update ${filename} for ${username}`,
-        content: Buffer.from(content).toString("base64"),
+      // Upload all files to the user's folder
+      for (const [filename, content] of Object.entries(files)) {
+        await bucket.put(`${username}/${filename}`, content, {
+          httpMetadata: { contentType: getContentType(filename) },
+        });
+      }
+
+      const url = `https://fire-usa.com/${username}/index.html`;
+      return new Response(JSON.stringify({ success: true, url }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (err) {
+      return new Response(JSON.stringify({ success: false, error: err.message }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       });
     }
+  },
+};
 
-    // Get the latest commit SHA
-    const branch = "main";
-    const refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, {
-      headers: { Authorization: `token ${token}` },
-    });
-    const refData = await refRes.json();
-    const baseSha = refData.object.sha;
-
-    // Create a new tree with the user files
-    const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
-      method: "POST",
-      headers: {
-        Authorization: `token ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        base_tree: baseSha,
-        tree: commits.map(f => ({
-          path: f.path,
-          mode: "100644",
-          type: "blob",
-          content: Buffer.from(f.content, "base64").toString(),
-        })),
-      }),
-    });
-    const treeData = await treeRes.json();
-
-    // Create a commit
-    const commitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
-      method: "POST",
-      headers: {
-        Authorization: `token ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: `Publish site for ${username}`,
-        tree: treeData.sha,
-        parents: [baseSha],
-      }),
-    });
-    const commitData = await commitRes.json();
-
-    // Update the branch ref
-    await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `token ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ sha: commitData.sha }),
-    });
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        success: true,
-        url: `https://fire-usa.com/${username}/index.html`,
-      }),
-    };
-  } catch (error) {
-    console.error(error);
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
-  }
+// Helper for content type
+function getContentType(filename) {
+  if (filename.endsWith(".html")) return "text/html";
+  if (filename.endsWith(".css")) return "text/css";
+  if (filename.endsWith(".js")) return "application/javascript";
+  if (filename.endsWith(".png")) return "image/png";
+  if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) return "image/jpeg";
+  return "application/octet-stream";
 }

@@ -30,7 +30,6 @@ require(['vs/editor/editor.main'], function () {
 function renderFileTree() {
   const tree = document.getElementById('file-tree');
   tree.innerHTML = '';
-
   for (let name in fileSystem) {
     const li = document.createElement('li');
     li.textContent = name + (fileSystem[name].type === 'folder' ? '/' : '');
@@ -92,7 +91,7 @@ function updatePreview(fileName) {
   preview.src = URL.createObjectURL(blob);
 }
 
-// Publish button
+// Publish button now calls Cloudflare Worker
 document.getElementById('publish').onclick = async () => {
   const username = prompt("Enter your Firefly username:");
   if (!username) return alert("Username required.");
@@ -105,7 +104,7 @@ document.getElementById('publish').onclick = async () => {
   }
 
   try {
-    const res = await fetch("/.netlify/functions/publish", {
+    const res = await fetch("https://<your-worker-subdomain>.workers.dev", {  // <-- CHANGE this to your actual Worker URL
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, files: filesToPublish })
@@ -114,9 +113,9 @@ document.getElementById('publish').onclick = async () => {
     if (data.success) {
       alert(`✅ Site published! View it at: ${data.url}`);
     } else {
-      alert("❌ Failed to publish site.");
+      alert(`❌ Failed to publish site: ${data.error || "Unknown error"}`);
     }
   } catch (e) {
-    alert("❌ Publish request failed.");
+    alert(`❌ Publish request failed: ${e.message}`);
   }
 };
