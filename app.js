@@ -91,7 +91,7 @@ function updatePreview(fileName) {
   preview.src = URL.createObjectURL(blob);
 }
 
-// Publish button now calls Cloudflare Worker
+// Publish button calls GitHub backend
 document.getElementById('publish').onclick = async () => {
   const username = prompt("Enter your Firefly username:");
   if (!username) return alert("Username required.");
@@ -104,13 +104,16 @@ document.getElementById('publish').onclick = async () => {
   }
 
   try {
-    const res = await fetch("https://<your-worker-subdomain>.workers.dev", {  // <-- CHANGE this to your actual Worker URL
+    // Update this URL to your serverless function endpoint (Netlify/other)
+    const res = await fetch("/.netlify/functions/publish", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, files: filesToPublish })
     });
+
     const data = await res.json();
     if (data.success) {
+      // Direct link to GitHub Pages folder
       alert(`✅ Site published! View it at: ${data.url}`);
     } else {
       alert(`❌ Failed to publish site: ${data.error || "Unknown error"}`);
