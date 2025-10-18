@@ -1,0 +1,2 @@
+# Map subdomains to user folders
+https://:username.fire-usa.com/*  /users/:username/:splat  200!

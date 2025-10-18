@@ -3,11 +3,16 @@ let currentFile = "index.html";
 
 // In-memory file system
 let fileSystem = {
-  "index.html": { type: "file", content: "<!DOCTYPE html><html><body><h1>Hello Firefly!</h1></body></html>" }
+  "index.html": {
+    type: "file",
+    content: "<!DOCTYPE html><html><body><h1>Hello Firefly!</h1></body></html>"
+  }
 };
 
 // Initialize Monaco Editor
-require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.41.0/min/vs' }});
+require.config({
+  paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.41.0/min/vs' }
+});
 require(['vs/editor/editor.main'], function () {
   editor = monaco.editor.create(document.getElementById('editor'), {
     value: fileSystem[currentFile].content,
@@ -91,7 +96,7 @@ function updatePreview(fileName) {
   preview.src = URL.createObjectURL(blob);
 }
 
-// Publish button now calls Netlify function
+// ✅ Netlify Publish Integration
 document.getElementById('publish').onclick = async () => {
   const username = prompt("Enter your Firefly username:");
   if (!username) return alert("Username required.");
@@ -104,7 +109,6 @@ document.getElementById('publish').onclick = async () => {
   }
 
   try {
-    // Call your Netlify serverless function
     const res = await fetch("/.netlify/functions/publish", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -112,10 +116,12 @@ document.getElementById('publish').onclick = async () => {
     });
 
     const data = await res.json();
+
     if (data.success) {
-      alert(`✅ Site published! Visit it at: ${data.url}`);
+      alert(`✅ Site published successfully!\n\nVisit it at:\n${data.url}`);
+      window.open(data.url, "_blank");
     } else {
-      alert(`❌ Publish failed: ${data.error || "Unknown error"}`);
+      alert(`❌ Failed to publish site: ${data.error || "Unknown error"}`);
     }
   } catch (e) {
     alert(`❌ Publish request failed: ${e.message}`);
