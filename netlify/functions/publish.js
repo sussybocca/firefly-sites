@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-import FormData from "form-data";
 
 export async function handler(event) {
   try {
@@ -12,49 +11,54 @@ export async function handler(event) {
       return { statusCode: 400, body: "Missing username or files" };
     }
 
-    const netlifyToken = process.env.NETLIFY_TOKEN; // Your personal Netlify access token
-    const siteName = `fire-usa-${username}`; // Netlify site name (unique per user)
-    const domain = "fire-usa.com"; // Your main domain
+    const netlifyToken = process.env.NETLIFY_TOKEN; // Your Netlify access token
+    const teamId = process.env.NETLIFY_TEAM_ID; // optional — your team/org ID
+    const domain = "fire-usa.com"; // your custom domain root
 
-    // 1️⃣ Create a new site for the user
-    const createSiteRes = await fetch("https://api.netlify.com/api/v1/sites", {
+    // 1️⃣ Create a new site
+    const siteRes = await fetch("https://api.netlify.com/api/v1/sites", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${netlifyToken}`,
+        "Authorization": `Bearer ${netlifyToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: siteName,
-        custom_domain: `${username}.${domain}`, // Map subdomain
+        name: `${username}-fire-usa`,
+        custom_domain: `${username}.${domain}`,
+        account_slug: teamId,
       }),
     });
 
-    const siteData = await createSiteRes.json();
-    if (!siteData.id) {
-      throw new Error(`Failed to create Netlify site: ${siteData.message || "Unknown error"}`);
+    const siteData = await siteRes.json();
+    if (!siteRes.ok) {
+      throw new Error(`Failed to create site: ${siteData.message || JSON.stringify(siteData)}`);
     }
 
-    // 2️⃣ Prepare files for deploy
-    const formData = new FormData();
+    // 2️⃣ Prepare the file structure
+    const filesToUpload = {};
     for (const [filename, content] of Object.entries(files)) {
-      formData.append(filename, content);
+      filesToUpload[filename] = Buffer.from(content).toString("base64");
     }
 
-    // 3️⃣ Deploy the files
-    const deployRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteData.id}/deploys`, {
+    // 3️⃣ Create a deploy
+    const deployRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteData.site_id}/deploys`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${netlifyToken}`,
+        "Authorization": `Bearer ${netlifyToken}`,
+        "Content-Type": "application/json",
       },
-      body: formData,
+      body: JSON.stringify({
+        files: filesToUpload,
+        draft: false,
+      }),
     });
 
     const deployData = await deployRes.json();
-    if (!deployData.id) {
-      throw new Error(`Failed to deploy: ${deployData.message || "Unknown error"}`);
+    if (!deployRes.ok) {
+      throw new Error(`Failed to deploy site: ${deployData.message || JSON.stringify(deployData)}`);
     }
 
-    // 4️⃣ Return the URL with user subdomain
+    // ✅ Return live URL
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -62,6 +66,7 @@ export async function handler(event) {
         url: `https://${username}.${domain}/index.html`,
       }),
     };
+
   } catch (err) {
     return {
       statusCode: 500,
