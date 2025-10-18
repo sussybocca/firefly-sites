@@ -1,29 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Firefly Editor</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>FHS - Free Hosting Site & Online Editor</title>
+  <meta name="description" content="FHS (Free Hosting Site) lets you create, code, and publish websites online for free. Multi-file online editor with instant publishing under your subdomain.">
+  <meta name="keywords" content="FHS, free hosting site, online code editor, publish website, free subdomain, web development, coding online">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph for social sharing -->
+  <meta property="og:title" content="FHS - Free Hosting Site & Online Editor">
+  <meta property="og:description" content="Create, code, and publish websites online for free with FHS. Get a subdomain under our domain and start your site instantly.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fire-usa.com/">
+  <meta property="og:image" content="https://fire-usa.com/images/FHS.png">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="FHS - Free Hosting Site & Online Editor">
+  <meta name="twitter:description" content="Create, code, and publish websites online for free with FHS. Get a subdomain under our domain and start your site instantly.">
+  <meta name="twitter:image" content="https://fire-usa.com/images/FHS.png">
+
+  <link rel="canonical" href="https://fire-usa.com/">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="app">
-  <div id="sidebar">
-    <div id="file-actions">
-      <button id="new-file">New File</button>
-      <button id="new-folder">New Folder</button>
-      <button id="rename">Rename</button>
-      <button id="delete">Delete</button>
-      <button id="publish">Publish</button>
-    </div>
-    <ul id="file-tree"></ul>
-  </div>
-  <div id="editor-container">
-    <div id="editor"></div>
-  </div>
-</div>
+  <header>
+    <img src="images/FHS.png" alt="FHS Logo" id="logo" style="width:120px;height:auto;margin-right:15px;">
+    <h1>FHS – Free Hosting Site</h1>
+    <h2>Create and publish websites online in seconds</h2>
+    <p>FHS provides a multi-file online code editor, free subdomain, and instant publishing. Start your website today without any cost!</p>
+  </header>
 
-<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs/loader.js"></script>
-<script src="app.js"></script>
+  <div id="app">
+    <div id="sidebar">
+      <div id="file-actions">
+        <button id="new-file">New File</button>
+        <button id="new-folder">New Folder</button>
+        <button id="rename">Rename</button>
+        <button id="delete">Delete</button>
+        <button id="publish">Publish</button>
+      </div>
+      <ul id="file-tree"></ul>
+    </div>
+    <div id="editor-container">
+      <div id="editor"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 FHS - Free Hosting Site. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs/loader.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
