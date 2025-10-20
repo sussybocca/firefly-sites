@@ -1,49 +1,47 @@
-// netlify/functions/publish.js
-export async function handler(event, context) {
-  const username = event.queryStringParameters?.username;
+import fetch from "node-fetch";
 
-  if (!username) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ success: false, error: "Missing username" })
-    };
+export async function handler(event, context) {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: JSON.stringify({ success: false, error: "Method not allowed" }) };
   }
 
-  if (event.httpMethod === "GET") {
-    // Return demo project or saved project for this username
-    const demoProject = {
-      "index.html": { type: "file", content: "<!DOCTYPE html><html><body><h1>Hello Firefly!</h1></body></html>" }
-    };
+  const { username, files } = JSON.parse(event.body);
+
+  if (!username || !files) {
+    return { statusCode: 400, body: JSON.stringify({ success: false, error: "Missing username or files" }) };
+  }
+
+  try {
+    // Create a temporary GitHub repo content ZIP or use in-memory zip
+    // For simplicity, we'll send content as a deploy to Netlify
+
+    // Prepare a deploy request
+    const deployResponse = await fetch("https://api.netlify.com/api/v1/sites", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.NETLIFY_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: username.toLowerCase(), // subdomain name
+        custom_domain: `${username}.fire-usa.com`
+      }),
+    });
+
+    const data = await deployResponse.json();
+
+    if (data.error) {
+      return { statusCode: 500, body: JSON.stringify({ success: false, error: data.error }) };
+    }
+
+    // Normally here you would trigger a deploy with the user's files
+    // Netlify can deploy from a repo or ZIP — you can automate it with the API
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, files: demoProject })
+      body: JSON.stringify({ success: true, url: `https://${username}.fire-usa.com` }),
     };
+  } catch (err) {
+    return { statusCode: 500, body: JSON.stringify({ success: false, error: err.message }) };
   }
-
-  if (event.httpMethod === "POST") {
-    try {
-      const files = JSON.parse(event.body); // project files from frontend
-      console.log(`Publishing project for ${username}:`, files);
-
-      // TODO: Save files to storage or GitHub if desired
-      // For now, simulate the published URL
-      const url = `https://${username}.fire-usa.com`;
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ success: true, url })
-      };
-    } catch (err) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ success: false, error: err.message })
-      };
-    }
-  }
-
-  return {
-    statusCode: 405,
-    body: JSON.stringify({ success: false, error: "Method not allowed" })
-  };
 }
