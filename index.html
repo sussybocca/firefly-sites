@@ -9,129 +9,98 @@
   <meta name="keywords" content="FHS, free hosting site, online code editor, publish website, free subdomain, web development, coding online">
   <meta name="robots" content="index, follow">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="FHS - Free Hosting Site & Online Editor">
-  <meta property="og:description" content="Create, code, and publish websites online for free with FHS. Get a subdomain under our domain and start your site instantly.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://fire-usa.com/">
-  <meta property="og:image" content="https://fire-usa.com/images/FHS.png">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="FHS - Free Hosting Site & Online Editor">
-  <meta name="twitter:description" content="Create, code, and publish websites online for free with FHS. Get a subdomain under our domain and start your site instantly.">
-  <meta name="twitter:image" content="https://fire-usa.com/images/FHS.png">
-
   <link rel="canonical" href="https://fire-usa.com/">
   <link rel="stylesheet" href="style.css">
 
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      flex-direction: column;
+    body { 
+      margin: 0; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: #f5f5f5; 
+      display: flex; 
+      flex-direction: column; 
+      height: 100vh; 
     }
 
-    header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 20px;
-      background: #1e1e1e;
-      color: white;
+    header { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      text-align: center; 
+      padding: 20px; 
+      background: #1e1e1e; 
+      color: white; 
     }
-
-    header img {
-      width: 120px;
-      height: auto;
-      margin-bottom: 10px;
-    }
-
+    header img { width: 120px; height: auto; margin-bottom: 10px; }
     header h1 { margin: 5px 0; }
     header h2 { margin: 5px 0; font-weight: normal; font-size: 1.2em; }
     header p { margin-top: 10px; max-width: 600px; }
 
-    #app {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      margin: 0;
-      height: calc(100% - 140px); /* header + footer approx */
+    #app { 
+      display: flex; 
+      flex: 1; 
+      margin: 0; 
+      overflow: hidden; 
     }
 
-    #sidebar {
-      width: 280px;
-      background: #2d2d2d;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid #444;
+    #sidebar { 
+      width: 300px; 
+      background-color: #1e1e1e; 
+      color: white; 
+      display: flex; 
+      flex-direction: column; 
     }
 
-    #file-actions {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 10px;
-      gap: 5px;
+    #file-actions { 
+      display: flex; 
+      flex-wrap: wrap; 
+      padding: 10px; 
+      gap: 5px; 
     }
 
-    #file-actions button {
-      flex: 1 1 45%;
-      padding: 6px;
-      background-color: #007acc;
-      border: none;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9em;
+    #file-actions button { 
+      flex: 1 1 45%; 
+      padding: 5px; 
+      background-color: #007acc; 
+      border: none; 
+      color: white; 
+      border-radius: 4px; 
+      cursor: pointer; 
     }
 
     #file-actions button:hover { background-color: #005f99; }
 
-    #file-tree {
-      list-style: none;
-      padding: 10px;
-      flex: 1;
-      overflow-y: auto;
+    #file-tree { 
+      list-style: none; 
+      padding: 10px; 
+      flex: 1; 
+      overflow-y: auto; 
     }
 
-    #file-tree li {
-      padding: 3px 6px;
-      cursor: pointer;
-      border-radius: 3px;
+    #file-tree li { padding: 2px 5px; cursor: pointer; }
+    #file-tree li:hover { background-color: #333; }
+
+    #editor-container { 
+      flex: 1; 
+      position: relative; 
+      display: flex; 
+      flex-direction: column; 
     }
 
-    #file-tree li:hover { background-color: #444; }
-
-    #editor-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+    #editor { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      bottom: 0; 
     }
 
-    #editor {
-      flex: 1;
-      width: 100%;
-    }
-
-    #preview {
-      width: 100%;
-      height: 250px;
-      border: none;
-      border-top: 1px solid #ccc;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      font-size: 0.9em;
-      color: #666;
-      background: #f0f0f0;
+    footer { 
+      text-align: center; 
+      padding: 15px; 
+      font-size: 0.9em; 
+      color: #666; 
+      background: #f0f0f0; 
     }
   </style>
 </head>
@@ -156,7 +125,6 @@
     </div>
     <div id="editor-container">
       <div id="editor"></div>
-      <iframe id="preview"></iframe>
     </div>
   </div>
 
