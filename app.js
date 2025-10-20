@@ -1,8 +1,12 @@
 let editor;
 let currentFile = "index.html";
 
+// In-memory file system
 let fileSystem = {
-  "index.html": { type: "file", content: "<!DOCTYPE html><html><body><h1>Hello Firefly!</h1></body></html>" }
+  "index.html": {
+    type: "file",
+    content: "<!DOCTYPE html><html><body><h1>Hello Firefly!</h1></body></html>"
+  }
 };
 
 // Initialize Monaco Editor
@@ -15,14 +19,17 @@ require(['vs/editor/editor.main'], () => {
   });
 
   editor.onDidChangeModelContent(() => {
-    fileSystem[currentFile].content = editor.getValue();
-    updatePreview(currentFile);
+    if (fileSystem[currentFile].type === "file") {
+      fileSystem[currentFile].content = editor.getValue();
+      updatePreview(currentFile);
+    }
   });
 
   renderFileTree();
   openFile(currentFile);
 });
 
+// Render file tree sidebar
 function renderFileTree() {
   const tree = document.getElementById('file-tree');
   tree.innerHTML = '';
@@ -34,11 +41,15 @@ function renderFileTree() {
   }
 }
 
+// Open file in editor
 function openFile(name) {
   currentFile = name;
-  if (fileSystem[name].type === 'file') editor.setValue(fileSystem[name].content);
+  if (fileSystem[name].type === 'file') {
+    editor.setValue(fileSystem[name].content);
+  }
 }
 
+// File actions
 document.getElementById('new-file').onclick = () => {
   const name = prompt("Enter new file name:");
   if (!name) return;
@@ -74,18 +85,35 @@ document.getElementById('delete').onclick = () => {
   }
 };
 
-// Publish
+// Live preview
+function updatePreview(fileName) {
+  const preview = document.getElementById('preview');
+  if (!fileSystem[fileName] || fileSystem[fileName].type !== "file") return;
+  const blob = new Blob([fileSystem[fileName].content], { type: 'text/html' });
+  preview.src = URL.createObjectURL(blob);
+}
+
+// Publish to Vercel backend
 document.getElementById('publish').onclick = async () => {
   const username = prompt("Enter your username:");
   if (!username) return alert("Username required.");
 
-  const res = await fetch(`/api/publish?username=${username}`, {
-    method: 'POST',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(fileSystem)
-  });
+  try {
+    const res = await fetch(`${window.location.origin}/api/publish?username=${username}`, {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fileSystem)
+    });
 
-  const data = await res.json();
-  if (data.success) alert(`✅ Published! Your site: ${data.url}`);
-  else alert(`❌ Publish failed: ${data.error || 'Unknown error'}`);
+    const data = await res.json();
+
+    if (data.success) {
+      alert(`✅ Published! Your site: ${data.url}`);
+      window.open(data.url, "_blank");
+    } else {
+      alert(`❌ Publish failed: ${data.error || 'Unknown error'}`);
+    }
+  } catch (err) {
+    alert(`❌ Publish request failed: ${err.message}`);
+  }
 };
