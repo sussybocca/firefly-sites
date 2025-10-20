@@ -9,7 +9,7 @@
   <meta name="keywords" content="FHS, free hosting site, online code editor, publish website, free subdomain, web development, coding online">
   <meta name="robots" content="index, follow">
 
-  <!-- Open Graph for social sharing -->
+  <!-- Open Graph -->
   <meta property="og:title" content="FHS - Free Hosting Site & Online Editor">
   <meta property="og:description" content="Create, code, and publish websites online for free with FHS. Get a subdomain under our domain and start your site instantly.">
   <meta property="og:type" content="website">
@@ -26,24 +26,113 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
-    header { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px; background: #1e1e1e; color: white; }
-    header img { width: 120px; height: auto; margin-bottom: 10px; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      background: #1e1e1e;
+      color: white;
+    }
+
+    header img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+
     header h1 { margin: 5px 0; }
     header h2 { margin: 5px 0; font-weight: normal; font-size: 1.2em; }
     header p { margin-top: 10px; max-width: 600px; }
-    #app { display: flex; height: 80vh; margin: 20px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
-    #sidebar { width: 300px; background-color: #1e1e1e; color: white; display: flex; flex-direction: column; }
-    #file-actions { display: flex; flex-wrap: wrap; padding: 10px; gap: 5px; }
-    #file-actions button { flex: 1 1 45%; padding: 5px; background-color: #007acc; border: none; color: white; border-radius: 4px; cursor: pointer; }
+
+    #app {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      margin: 0;
+      height: calc(100% - 140px); /* header + footer approx */
+    }
+
+    #sidebar {
+      width: 280px;
+      background: #2d2d2d;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #444;
+    }
+
+    #file-actions {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px;
+      gap: 5px;
+    }
+
+    #file-actions button {
+      flex: 1 1 45%;
+      padding: 6px;
+      background-color: #007acc;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+
     #file-actions button:hover { background-color: #005f99; }
-    #file-tree { list-style: none; padding: 10px; flex: 1; overflow-y: auto; }
-    #file-tree li { padding: 2px 5px; cursor: pointer; }
-    #file-tree li:hover { background-color: #333; }
-    #editor-container { flex: 1; display: flex; flex-direction: column; }
-    #editor { width: 100%; flex: 1; }
-    #preview { width: 100%; height: 200px; border-top: 1px solid #ccc; }
-    footer { text-align: center; padding: 15px; font-size: 0.9em; color: #666; background: #f0f0f0; }
+
+    #file-tree {
+      list-style: none;
+      padding: 10px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    #file-tree li {
+      padding: 3px 6px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    #file-tree li:hover { background-color: #444; }
+
+    #editor-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #editor {
+      flex: 1;
+      width: 100%;
+    }
+
+    #preview {
+      width: 100%;
+      height: 250px;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 0.9em;
+      color: #666;
+      background: #f0f0f0;
+    }
   </style>
 </head>
 <body>
